@@ -303,8 +303,22 @@
         </div>
       </div>
       <div class="scroll"><table>
-        <thead><tr><th>Date</th><th>Batch</th><th>Paid by</th><th>Method</th><th class="r">Amount</th></tr></thead>
+        <thead><tr><th>Date</th><th>Batch</th><th>Method</th><th class="r">Amount</th><th>Notes</th></tr></thead>
         <tbody id="entryBody"></tbody>
+      </table></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Membership fees</h2><span class="aside" id="memAside"></span></div>
+      <div class="meters">
+        <div class="meter">
+          <div class="top"><span>Collected</span><span class="pct num" id="memTotal">–</span></div>
+          <div class="sub" id="memSub">–</div>
+        </div>
+      </div>
+      <div class="scroll"><table>
+        <thead><tr><th>Date</th><th>Batch</th><th>Method</th><th class="r">Amount</th><th>Notes</th></tr></thead>
+        <tbody id="memBody"></tbody>
       </table></div>
     </section>
 
@@ -350,9 +364,20 @@
         <label>Batch<input name="batch" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 2005" title="The batch year, for example 2005"></label>
         <label>Amount (LKR)<input type="number" name="amount" min="1" step="any" inputmode="decimal" required></label>
         <label>Payment method<select name="method" id="entryMethodSelect"></select></label>
-        <label>Paid by<input name="paidBy"></label>
         <label>Notes<input name="notes"></label>
         <div class="actions"><button class="btn" type="submit">Add entry fee</button></div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Add membership fee</h2></div>
+      <form class="admin" id="memForm">
+        <label>Date<input type="date" name="date" required></label>
+        <label>Batch<input name="batch" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 2005" title="The batch year, for example 2005"></label>
+        <label>Amount (LKR)<input type="number" name="amount" min="1" step="any" inputmode="decimal" required></label>
+        <label>Payment method<select name="method" id="memMethodSelect"></select></label>
+        <label>Notes<input name="notes"></label>
+        <div class="actions"><button class="btn" type="submit">Add membership fee</button></div>
       </form>
     </section>
 
@@ -406,7 +431,8 @@ const SOURCES = {
   expenses: { tab: "Expenses" },
   budget:   { tab: "Summary Dashboard", range: "F12:G80", raw: true, optional: true }, // planned budget per category
   lists:    { tab: "Lists items", optional: true },
-  entry:    { tab: "Match Entry Fees", optional: true } // created by the Admin tab with the first entry fee
+  entry:    { tab: "Match Entry Fees", optional: true }, // created by the Admin tab with the first entry fee
+  membership: { tab: "Membership Fees", optional: true } // created by the Admin tab with the first membership fee
 };
 
 // Match entry fees: number of batches (teams) and the fee per batch.
@@ -578,7 +604,7 @@ function render(data, time) {
   $("incTotal").textContent = fmt(received);
 
   // Match entry fees
-  const fees = (data.entry || []).map(r => ({ date: pick(r, "date"), team: String(pick(r, "batch", "team")).trim(), by: pick(r, "paidby"), method: pick(r, "paymentmethod", "method"), amount: num(pick(r, "amount")) }))
+  const fees = (data.entry || []).map(r => ({ date: pick(r, "date"), team: String(pick(r, "batch", "team")).trim(), method: pick(r, "paymentmethod", "method"), notes: pick(r, "notes"), amount: num(pick(r, "amount")) }))
     .filter(r => r.team && r.amount > 0);
   const paidBy = {};
   fees.forEach(f => { paidBy[norm(f.team)] = (paidBy[norm(f.team)] || 0) + f.amount; });
@@ -589,8 +615,20 @@ function render(data, time) {
   $("entryFill").style.width = Math.min(teamsPaid / TEAMS_TOTAL * 100, 100) + "%";
   $("entryAside").textContent = `${TEAMS_TOTAL - teamsPaid} still to pay`;
   $("entryBody").innerHTML = fees.length
-    ? fees.map(f => `<tr><td>${esc(f.date)}</td><td>${esc(titleCase(f.team))}</td><td>${esc(titleCase(f.by))}</td><td>${esc(f.method)}</td><td class="r num">${fmt(f.amount)}</td></tr>`).join("")
+    ? fees.map(f => `<tr><td>${esc(f.date)}</td><td>${esc(titleCase(f.team))}</td><td>${esc(f.method)}</td><td class="r num">${fmt(f.amount)}</td><td>${esc(f.notes)}</td></tr>`).join("")
     : `<tr><td colspan="5" class="empty">No entry fees recorded yet.</td></tr>`;
+
+  // Membership fees
+  const mfees = (data.membership || []).map(r => ({ date: pick(r, "date"), batch: String(pick(r, "batch")).trim(), method: pick(r, "paymentmethod", "method"), notes: pick(r, "notes"), amount: num(pick(r, "amount")) }))
+    .filter(r => r.batch && r.amount > 0);
+  const memTotal = mfees.reduce((a, f) => a + f.amount, 0);
+  const memBatches = new Set(mfees.map(f => norm(f.batch))).size;
+  $("memTotal").textContent = "LKR " + fmt(memTotal);
+  $("memSub").textContent = `${memBatches} batch${memBatches === 1 ? "" : "es"} paid · ${mfees.length} payment${mfees.length === 1 ? "" : "s"}`;
+  $("memAside").textContent = mfees.length ? "" : "None yet";
+  $("memBody").innerHTML = mfees.length
+    ? mfees.map(f => `<tr><td>${esc(f.date)}</td><td>${esc(f.batch)}</td><td>${esc(f.method)}</td><td class="r num">${fmt(f.amount)}</td><td>${esc(f.notes)}</td></tr>`).join("")
+    : `<tr><td colspan="5" class="empty">No membership fees recorded yet.</td></tr>`;
 
   // Admin dropdowns
   fillFromSelect(sponsors.map(s => s.name));
@@ -697,9 +735,11 @@ function fillLists(rows) {
   const keep = id => $(id).value;
   $("tierSelect").innerHTML = opts(lists.tiers, keep("tierSelect") || "Other/Donor");
   // Entry fees have their own form, so they're left out of the general income types.
-  $("typeSelect").innerHTML = opts(lists.types.filter(t => !/entry\s*fee/i.test(t)), keep("typeSelect"));
+  $("typeSelect").innerHTML = opts(lists.types.filter(t => !/entry\s*fee|membership/i.test(t)), keep("typeSelect"));
   $("methodSelect").innerHTML = opts(lists.methods, keep("methodSelect"));
   $("entryMethodSelect").innerHTML = opts(lists.methods, keep("entryMethodSelect"));
+  $("memMethodSelect").innerHTML = opts(lists.methods, keep("memMethodSelect"));
+
   const kc = keep("catSelect");
   $("catSelect").innerHTML = opts(lists.categories, kc) + `<option value="__new"${kc === "__new" ? " selected" : ""}>Add new category…</option>`;
 }
@@ -802,6 +842,7 @@ if (IS_ADMIN) {
   wireForm("sponsorForm", f => ({ action: "sponsor", ...f }), p => `sponsor ${titleCase(p.name)}`);
   wireForm("entryForm", f => ({ action: "entryfee", ...f }), p => `entry fee from ${p.batch}, ${lkr(p.amount)}`);
   $("entryForm").elements.amount.value = ENTRY_FEE;
+  wireForm("memForm", f => ({ action: "membership", ...f }), p => `membership fee from batch ${p.batch}, ${lkr(p.amount)}`);
 }
 
 /* ===== Tabs ===== */
