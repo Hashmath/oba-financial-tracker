@@ -166,6 +166,60 @@
   .notice { border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; font-size: 14px; background: #FDE8E8; border: 1px solid #EBA3A3; color: #7A1A1A; }
   [hidden] { display: none !important; }
 
+  /* ---------- Money mix (income by type / spending by category) ---------- */
+  .mixwrap { padding: 0 16px 16px; }
+  .mixbar { display: flex; height: 22px; border-radius: 11px; overflow: hidden; background: #E6EEE7; }
+  .mixbar span { height: 100%; transition: width .6s ease; }
+  .mixbar span + span { box-shadow: inset 2px 0 0 #fff; }
+  .mixtiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+  .mtile { border-radius: 12px; padding: 10px 12px; background: #F7FAF6; border: 1px solid var(--line); border-top: 4px solid var(--c); text-align: left; font: inherit; color: inherit; cursor: default; }
+  button.mtile { cursor: pointer; }
+  button.mtile[aria-pressed="true"] { background: var(--green-800); color: #fff; border-color: var(--green-800); }
+  button.mtile[aria-pressed="true"] .k, button.mtile[aria-pressed="true"] .s { color: #CFE6D5; }
+  .mtile .k { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .mtile .v { font-family: "Anton", Impact, sans-serif; font-size: 24px; line-height: 1.15; }
+  .mtile .s { font-size: 12px; color: var(--muted); }
+
+  /* ---------- Feeds grouped by day ---------- */
+  .feed { padding: 0 16px 6px; }
+  .group + .group { margin-top: 14px; }
+  .ghead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px; padding: 8px 2px; border-bottom: 2px solid var(--line); }
+  .ghead b { font-family: "Anton", Impact, sans-serif; font-weight: 400; font-size: 18px; letter-spacing: .4px; color: var(--green-800); text-transform: uppercase; }
+  .ghead span { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .ghead span strong { color: var(--ink); }
+  .item { display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; padding: 10px 2px; border-bottom: 1px solid #EDF2EE; }
+  .item:last-child { border-bottom: 0; }
+  .dtile { width: 46px; height: 50px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+           background: linear-gradient(160deg, #E3F3E6, #D3EBD8); color: var(--green-800); }
+  .dtile .d { font-family: "Anton", Impact, sans-serif; font-size: 21px; }
+  .dtile .m { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 3px; }
+  .dtile.out { background: linear-gradient(160deg, #FFF4D0, #FCE8A6); color: #7A5600; }
+  .item .who { font-weight: 600; font-size: 15px; line-height: 1.3; }
+  .item .sub { font-size: 13px; color: var(--muted); margin-top: 3px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .tagc { display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #EEF3EF; color: var(--green-800); }
+  .tagc i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .pill { font-family: "Anton", Impact, sans-serif; font-size: 18px; padding: 3px 12px; border-radius: 999px; white-space: nowrap; letter-spacing: .3px; }
+  .pill.in { background: #DFF3E4; color: var(--green-600); }
+  .pill.out { background: #FDE7E4; color: var(--ball); }
+  .feed-total { display: flex; justify-content: space-between; align-items: center; margin: 4px 16px 16px; padding: 12px 16px; border-radius: 12px;
+                background: linear-gradient(90deg, var(--green-900), var(--green-800)); color: #fff; font-weight: 600; }
+  .feed-total b { font-family: "Anton", Impact, sans-serif; font-weight: 400; font-size: 24px; color: var(--yellow); letter-spacing: .4px; }
+  .feed-total.out b { color: #FFB4AA; }
+
+  /* ---------- Batch chips (entry and membership fees) ---------- */
+  .batches { padding: 0 16px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+  .bchip { border-radius: 12px; padding: 9px 8px; text-align: center; background: linear-gradient(160deg, #E3F3E6, #CFEAD6); border: 1px solid #B7DDBF; }
+  .bchip .b { font-family: "Anton", Impact, sans-serif; font-size: 20px; color: var(--green-800); line-height: 1.1; }
+  .bchip .a { font-size: 12px; font-weight: 600; color: var(--green-600); }
+  .bchip .m { font-size: 11px; color: var(--muted); }
+  .bchip.part { background: linear-gradient(160deg, #FFF6D6, #FDEBA8); border-color: #EBCB72; }
+  .bchip.part .b, .bchip.part .a { color: #6B5200; }
+  .bchip.slot { background: transparent; border: 2px dashed var(--line); display: grid; place-items: center; min-height: 64px; color: #A9B6AD; font-size: 12px; font-weight: 600; }
+  .bchip.slot.wide { grid-column: 1 / -1; min-height: 46px; font-size: 13px; }
+  .bchip.mem { background: linear-gradient(160deg, #FFF8DB, #FDEFB5); border-color: #F2D77A; }
+  .bchip.mem .b { color: #5A4300; } .bchip.mem .a { color: #8A6400; }
+  @media (prefers-reduced-motion: reduce) { .mixbar span { transition: none; } }
+
   /* ---------- Admin ---------- */
   form.admin { padding: 0 16px 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
   form.admin label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
@@ -281,18 +335,24 @@
   <!-- EXPENSES -->
   <div id="tab-expenses" hidden>
     <section class="panel">
-      <div class="panel-head"><h2>Expenses</h2><span class="aside" id="expAside"></span></div>
+      <div class="panel-head"><h2>Where the money went</h2><span class="aside" id="expAside"></span></div>
+      <div class="mixwrap" id="expMix"></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>Expenses</h2><span class="aside" id="expCount"></span></div>
       <div class="filters" id="expFilters"></div>
-      <div class="scroll"><table>
-        <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Paid by</th><th class="r">Amount</th></tr></thead>
-        <tbody id="expBody"></tbody>
-        <tfoot><tr><td colspan="4">Total</td><td class="r num" id="expTotal">–</td></tr></tfoot>
-      </table></div>
+      <div class="feed" id="expBody"></div>
+      <div class="feed-total out"><span>Total spent</span><b class="num" id="expTotal">–</b></div>
     </section>
   </div>
 
   <!-- INCOME -->
   <div id="tab-income" hidden>
+    <section class="panel">
+      <div class="panel-head"><h2>Where the money came from</h2><span class="aside" id="incMixAside"></span></div>
+      <div class="mixwrap" id="incMix"></div>
+    </section>
+
     <section class="panel">
       <div class="panel-head"><h2>Match entry fees</h2><span class="aside" id="entryAside"></span></div>
       <div class="meters">
@@ -302,10 +362,7 @@
           <div class="track"><div class="fill y" id="entryFill"></div></div>
         </div>
       </div>
-      <div class="scroll"><table>
-        <thead><tr><th>Date</th><th>Batch</th><th>Method</th><th class="r">Amount</th><th>Notes</th></tr></thead>
-        <tbody id="entryBody"></tbody>
-      </table></div>
+      <div class="batches" id="entryBody"></div>
     </section>
 
     <section class="panel">
@@ -316,19 +373,13 @@
           <div class="sub" id="memSub">–</div>
         </div>
       </div>
-      <div class="scroll"><table>
-        <thead><tr><th>Date</th><th>Batch</th><th>Method</th><th class="r">Amount</th><th>Notes</th></tr></thead>
-        <tbody id="memBody"></tbody>
-      </table></div>
+      <div class="batches" id="memBody"></div>
     </section>
 
     <section class="panel">
       <div class="panel-head"><h2>Income received</h2><span class="aside" id="incAside"></span></div>
-      <div class="scroll"><table>
-        <thead><tr><th>Date</th><th>Received from</th><th>Type</th><th>Method</th><th class="r">Amount</th></tr></thead>
-        <tbody id="incBody"></tbody>
-        <tfoot><tr><td colspan="4">Total</td><td class="r num" id="incTotal">–</td></tr></tfoot>
-      </table></div>
+      <div class="feed" id="incBody"></div>
+      <div class="feed-total"><span>Total received</span><b class="num" id="incTotal">–</b></div>
     </section>
   </div>
 
@@ -612,11 +663,22 @@ function render(data, time) {
   renderExpenses(expenses);
 
   // Income table
-  $("incAside").textContent = `${income.length} payment${income.length === 1 ? "" : "s"}`;
-  $("incBody").innerHTML = income.length
-    ? income.map(r => `<tr><td>${esc(r.date)}</td><td>${esc(titleCase(r.from))}</td><td>${esc(r.type)}</td><td>${esc(r.method)}</td><td class="r num">${fmt(r.amount)}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="empty">No income recorded yet.</td></tr>`;
-  $("incTotal").textContent = fmt(received);
+  const incParts = partsOf(income, r => String(r.type || "").trim() || "Other");
+  const incColour = Object.fromEntries(incParts.map(p => [p.name, p.c]));
+  $("incMix").innerHTML = mixHTML(incParts, received, { unit: "entry" });
+  $("incMixAside").textContent = `LKR ${fmt(received)} received`;
+  $("incAside").textContent = `${income.length} entr${income.length === 1 ? "y" : "ies"}`;
+  $("incBody").innerHTML = income.length ? byDay(income).map(g => `
+    <div class="group">
+      <div class="ghead"><b>${dayTitle(g.d)}</b><span>${g.items.length} entr${g.items.length === 1 ? "y" : "ies"} · <strong class="num">LKR ${fmt(g.items.reduce((a, r) => a + r.amount, 0))}</strong></span></div>
+      ${g.items.map(r => { const t = String(r.type || "").trim() || "Other"; return `<div class="item">
+        ${dateTile(g.d)}
+        <div><div class="who">${esc(titleCase(r.from))}</div>
+          <div class="sub"><span class="tagc" style="--c:${incColour[t] || "#999"}"><i></i>${esc(t)}</span>${r.method ? `<span>${esc(r.method)}</span>` : ""}</div></div>
+        <span class="pill in num">+${fmt(r.amount)}</span>
+      </div>`; }).join("")}
+    </div>`).join("") : `<div class="empty">No income recorded yet.</div>`;
+  $("incTotal").textContent = "LKR " + fmt(received);
 
   // Match entry fees
   const fees = (data.entry || []).map(r => ({ date: pick(r, "date"), team: String(pick(r, "batch", "team")).trim(), method: pick(r, "paymentmethod", "method"), notes: pick(r, "notes"), amount: num(pick(r, "amount")) }))
@@ -629,9 +691,17 @@ function render(data, time) {
   $("entrySub").textContent = `LKR ${fmt(feeTotal)} of ${fmt(TEAMS_TOTAL * ENTRY_FEE)} (LKR ${fmt(ENTRY_FEE)} per batch)`;
   $("entryFill").style.width = Math.min(teamsPaid / TEAMS_TOTAL * 100, 100) + "%";
   $("entryAside").textContent = `${TEAMS_TOTAL - teamsPaid} still to pay`;
-  $("entryBody").innerHTML = fees.length
-    ? fees.map(f => `<tr><td>${esc(f.date)}</td><td>${esc(titleCase(f.team))}</td><td>${esc(f.method)}</td><td class="r num">${fmt(f.amount)}</td><td>${esc(f.notes)}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="empty">No entry fees recorded yet.</td></tr>`;
+  // One chip per batch (sorted), then dashed slots for the batches still to pay.
+  const batchList = [...new Map(fees.map(f => [norm(f.team), f.team])).values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const chip = (name, list, cls) => {
+    const amt = list.reduce((a, f) => a + f.amount, 0), last = list[list.length - 1];
+    const tip = list.map(f => `${f.date}: LKR ${fmt(f.amount)}${f.method ? " (" + f.method + ")" : ""}${f.notes ? " – " + f.notes : ""}`).join("\n");
+    return `<div class="bchip ${cls}" title="${esc(tip)}"><div class="b">${esc(name)}</div><div class="a num">${fmt(amt)}</div><div class="m">${esc(last.method || "")}</div></div>`;
+  };
+  $("entryBody").innerHTML = batchList.map(b => {
+    const list = fees.filter(f => norm(f.team) === norm(b));
+    return chip(b, list, list.reduce((a, f) => a + f.amount, 0) >= ENTRY_FEE ? "" : "part");
+  }).join("") + (TEAMS_TOTAL > batchList.length ? `<div class="bchip slot wide">${TEAMS_TOTAL - batchList.length} more batch${TEAMS_TOTAL - batchList.length === 1 ? "" : "es"} still to pay</div>` : "");
 
   // Membership fees
   const mfees = (data.membership || []).map(r => ({ date: pick(r, "date"), batch: String(pick(r, "batch")).trim(), method: pick(r, "paymentmethod", "method"), notes: pick(r, "notes"), amount: num(pick(r, "amount")) }))
@@ -641,9 +711,10 @@ function render(data, time) {
   $("memTotal").textContent = "LKR " + fmt(memTotal);
   $("memSub").textContent = `${memBatches} batch${memBatches === 1 ? "" : "es"} paid · ${mfees.length} payment${mfees.length === 1 ? "" : "s"}`;
   $("memAside").textContent = mfees.length ? "" : "None yet";
-  $("memBody").innerHTML = mfees.length
-    ? mfees.map(f => `<tr><td>${esc(f.date)}</td><td>${esc(f.batch)}</td><td>${esc(f.method)}</td><td class="r num">${fmt(f.amount)}</td><td>${esc(f.notes)}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="empty">No membership fees recorded yet.</td></tr>`;
+  const memBatches2 = [...new Map(mfees.map(f => [norm(f.batch), f.batch])).values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  $("memBody").innerHTML = memBatches2.length
+    ? memBatches2.map(b => chip(b, mfees.filter(f => norm(f.batch) === norm(b)), "mem")).join("")
+    : `<div class="empty" style="grid-column:1/-1;padding:0">No membership fees recorded yet.</div>`;
 
   // Admin dropdowns
   fillFromSelect(sponsors.map(s => s.name));
@@ -682,23 +753,72 @@ function renderSponsors(sponsors) {
   }).join("") || `<section class="panel"><div class="empty">No sponsors listed yet.</div></section>`;
 }
 
+const PALETTE = ["#17803A", "#F7C61B", "#0B3D1E", "#F39C12", "#2E9E52", "#C62828", "#6C7A89", "#8E44AD", "#1ABC9C", "#D35400"];
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// Sheet dates arrive as text like "08-Oct-2026"; turn them into a Date (or null).
+const toDay = v => { const t = Date.parse(String(v || "").replace(/-/g, " ")); return isNaN(t) ? null : new Date(t); };
+const dayKey = d => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` : "";
+const dayTitle = d => d ? `${WEEK[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}` : "No date";
+const dateTile = (d, cls = "") => `<div class="dtile ${cls}">${d ? `<span class="d">${d.getDate()}</span><span class="m">${MON[d.getMonth()]}</span>` : `<span class="d">–</span>`}</div>`;
+
+// Groups records by day, newest first.
+function byDay(list) {
+  const g = new Map();
+  list.forEach(x => { const d = toDay(x.date), k = dayKey(d); if (!g.has(k)) g.set(k, { d, items: [] }); g.get(k).items.push(x); });
+  return [...g.entries()].sort((a, b) => b[0].localeCompare(a[0])).map(([, v]) => v);
+}
+
+// A coloured bar split by share, plus a tile per part. Tiles can act as filter buttons.
+function mixHTML(parts, total, { filter, active, unit } = {}) {
+  if (!parts.length) return `<div class="empty" style="padding:0">Nothing recorded yet.</div>`;
+  const bar = parts.map(p => `<span style="width:${total ? p.amt / total * 100 : 0}%;background:${p.c}" title="${esc(p.name)}: LKR ${fmt(p.amt)}"></span>`).join("");
+  const tiles = parts.map(p => {
+    const pct = total ? Math.round(p.amt / total * 100) : 0;
+    const inner = `<div class="k">${esc(p.name)}</div><div class="v num">${fmt(p.amt)}</div><div class="s">${pct < 1 && p.amt ? "<1" : pct}% · ${p.n} ${p.n === 1 ? (unit || "item") : (unit === "entry" ? "entries" : (unit || "item") + "s")}</div>`;
+    return filter ? `<button class="mtile" style="--c:${p.c}" data-${filter}="${esc(p.name)}" aria-pressed="${active === p.name}">${inner}</button>`
+                  : `<div class="mtile" style="--c:${p.c}">${inner}</div>`;
+  }).join("");
+  return `<div class="mixbar">${bar}</div><div class="mixtiles">${tiles}</div>`;
+}
+function partsOf(list, keyOf) {
+  const m = new Map();
+  list.forEach(x => { const k = keyOf(x) || "Other"; if (!m.has(k)) m.set(k, { name: k, amt: 0, n: 0 }); const v = m.get(k); v.amt += x.amount; v.n++; });
+  return [...m.values()].sort((a, b) => b.amt - a.amt).map((p, i) => ({ ...p, c: PALETTE[i % PALETTE.length] }));
+}
+
 let expFilter = "";
 let lastExpenses = [];
 function renderExpenses(expenses) {
   lastExpenses = expenses;
-  const cats = [...new Set(expenses.map(e => e.cat))].sort();
-  if (expFilter && !cats.includes(expFilter)) expFilter = "";
-  $("expFilters").innerHTML = expenses.length
-    ? [`<button class="chipbtn" data-cat="" aria-pressed="${!expFilter}">All</button>`, ...cats.map(c => `<button class="chipbtn" data-cat="${esc(c)}" aria-pressed="${c === expFilter}">${esc(c)}</button>`)].join("")
-    : "";
+  const total = expenses.reduce((a, r) => a + r.amount, 0);
+  const parts = partsOf(expenses, e => e.cat);
+  const colour = Object.fromEntries(parts.map(p => [p.name, p.c]));
+  if (expFilter && !colour[expFilter]) expFilter = "";
+
+  // Category tiles double as filters: tap one to show only that category, tap again for all.
+  $("expMix").innerHTML = mixHTML(parts, total, { filter: "cat", active: expFilter });
+  $("expAside").textContent = `LKR ${fmt(total)} across ${parts.length} categor${parts.length === 1 ? "y" : "ies"}`;
+  $("expFilters").innerHTML = expFilter ? `<button class="chipbtn" data-cat="" aria-pressed="false">Show all categories</button>` : "";
+
   const list = expFilter ? expenses.filter(e => e.cat === expFilter) : expenses;
-  $("expBody").innerHTML = list.length
-    ? list.map(r => `<tr><td>${esc(r.date)}</td><td><span class="cat">${esc(r.cat)}</span></td><td class="wrap">${esc(r.desc)}</td><td>${esc(titleCase(r.by))}</td><td class="r num">${fmt(r.amount)}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="empty">No expenses recorded yet.</td></tr>`;
-  const total = list.reduce((a, r) => a + r.amount, 0);
-  $("expTotal").textContent = fmt(total);
-  $("expAside").textContent = `${list.length} item${list.length === 1 ? "" : "s"}`;
+  $("expBody").innerHTML = list.length ? byDay(list).map(g => `
+    <div class="group">
+      <div class="ghead"><b>${dayTitle(g.d)}</b><span>${g.items.length} item${g.items.length === 1 ? "" : "s"} · <strong class="num">LKR ${fmt(g.items.reduce((a, e) => a + e.amount, 0))}</strong></span></div>
+      ${g.items.map(e => `<div class="item">
+        ${dateTile(g.d, "out")}
+        <div><div class="who">${esc(e.desc || e.cat)}</div>
+          <div class="sub"><span class="tagc" style="--c:${colour[e.cat] || "#999"}"><i></i>${esc(e.cat)}</span>${e.by ? `<span>Paid by ${esc(titleCase(e.by))}</span>` : ""}</div></div>
+        <span class="pill out num">−${fmt(e.amount)}</span>
+      </div>`).join("")}
+    </div>`).join("") : `<div class="empty">No expenses recorded yet.</div>`;
+  $("expTotal").textContent = "LKR " + fmt(list.reduce((a, r) => a + r.amount, 0));
+  $("expCount").textContent = `${list.length} item${list.length === 1 ? "" : "s"}${expFilter ? ` in ${expFilter}` : ""}`;
 }
+$("expMix").addEventListener("click", e => {
+  const b = e.target.closest("button.mtile"); if (!b) return;
+  expFilter = expFilter === b.dataset.cat ? "" : b.dataset.cat; renderExpenses(lastExpenses);
+});
 $("expFilters").addEventListener("click", e => {
   const b = e.target.closest(".chipbtn"); if (!b) return;
   expFilter = b.dataset.cat; renderExpenses(lastExpenses);
