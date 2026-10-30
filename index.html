@@ -490,13 +490,28 @@ async function fetchTab({ tab, range, raw }) {
   });
 }
 
+// The two fee tabs are read through the Apps Script web app, which returns every cell exactly as
+// shown. Reading them straight from the sheet drops batches like "2005 B" when most batches are numbers.
+async function fetchFees() {
+  if (!ADMIN_URL || ADMIN_URL.startsWith("PASTE_")) throw new Error("no web app");
+  const r = await fetch(ADMIN_URL + "?fees=1&_=" + Date.now());
+  const j = JSON.parse(await r.text());
+  if (!j.ok || !Array.isArray(j.entry)) throw new Error("bad fee data");
+  return j;
+}
+
 async function fetchAll() {
-  const keys = Object.keys(SOURCES);
-  const results = await Promise.all(keys.map(k => fetchTab(SOURCES[k]).catch(err => {
-    if (SOURCES[k].optional) return [];
-    throw err;
-  })));
-  return Object.fromEntries(keys.map((k, i) => [k, results[i]]));
+  const keys = Object.keys(SOURCES).filter(k => k !== "entry" && k !== "membership");
+  const [results, fees] = await Promise.all([
+    Promise.all(keys.map(k => fetchTab(SOURCES[k]).catch(err => {
+      if (SOURCES[k].optional) return [];
+      throw err;
+    }))),
+    // If the web app can't be reached (or is an older version), fall back to reading the tabs directly.
+    fetchFees().catch(() => Promise.all([fetchTab(SOURCES.entry).catch(() => []), fetchTab(SOURCES.membership).catch(() => [])])
+      .then(([entry, membership]) => ({ entry, membership })))
+  ]);
+  return { ...Object.fromEntries(keys.map((k, i) => [k, results[i]])), entry: fees.entry || [], membership: fees.membership || [] };
 }
 
 /* ===== Turn sheet rows into clean records ===== */
