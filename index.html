@@ -206,6 +206,24 @@
   .feed-total b { font-family: "Anton", Impact, sans-serif; font-weight: 400; font-size: 24px; color: var(--yellow); letter-spacing: .4px; }
   .feed-total.out b { color: #FFB4AA; }
 
+  /* ---------- Latest activity: in/out summary and a timeline ---------- */
+  .flow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 14px; }
+  .flow div { border-radius: 12px; padding: 10px 12px; }
+  .flow .in { background: #DFF3E4; color: var(--green-800); }
+  .flow .out { background: #FDE7E4; color: #8A1C1C; }
+  .flow .k { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; opacity: .8; }
+  .flow .v { font-family: "Anton", Impact, sans-serif; font-size: 22px; line-height: 1.2; }
+  .timeline { position: relative; padding: 0 16px 16px 16px; }
+  .timeline::before { content: ""; position: absolute; left: 37px; top: 6px; bottom: 22px; width: 2px; background: linear-gradient(var(--line), #E9EFEA); }
+  .tl { position: relative; display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 8px 0; }
+  .tl .ic { position: relative; z-index: 1; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font: 700 18px "Poppins", Arial, sans-serif; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+  .tl.in .ic { background: linear-gradient(135deg, #2E9E52, var(--green-600)); color: #fff; }
+  .tl.out .ic { background: linear-gradient(135deg, #F7C61B, #F39C12); color: var(--green-900); }
+  .tl .who { font-weight: 600; font-size: 15px; line-height: 1.3; }
+  .tl .sub { font-size: 13px; color: var(--muted); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .tl .when { font-weight: 600; color: var(--green-800); }
+  .tl-day { position: relative; z-index: 1; display: inline-block; margin: 8px 0 2px 0; padding: 2px 10px; border-radius: 999px; background: var(--green-800); color: var(--yellow); font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+
   /* ---------- Batch chips (entry and membership fees) ---------- */
   .batches { padding: 0 16px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
   .bchip { border-radius: 12px; padding: 9px 8px; text-align: center; background: linear-gradient(160deg, #E3F3E6, #CFEAD6); border: 1px solid #B7DDBF; }
@@ -319,11 +337,9 @@
     </section>
 
     <section class="panel">
-      <div class="panel-head"><h2>Latest activity</h2></div>
-      <div class="scroll"><table>
-        <thead><tr><th>Date</th><th>Details</th><th class="r">Amount</th></tr></thead>
-        <tbody id="latestBody"></tbody>
-      </table></div>
+      <div class="panel-head"><h2>Latest activity</h2><span class="aside">Newest first</span></div>
+      <div class="flow" id="latestFlow"></div>
+      <div class="timeline" id="latestBody"></div>
     </section>
   </div>
 
@@ -651,13 +667,38 @@ function render(data, time) {
 
   // Latest activity: newest 8 income and expense entries together
   const when = d => { const t = Date.parse(String(d).replace(/-/g, " ")); return isNaN(t) ? 0 : t; };
+  // Same tag colours as the Income and Expenses tabs
+  const inCol = Object.fromEntries(partsOf(income, r => String(r.type || "").trim() || "Other").map(p => [p.name, p.c]));
+  const outCol = Object.fromEntries(partsOf(expenses, e => e.cat).map(p => [p.name, p.c]));
   const latest = [
-    ...income.map(r => ({ d: r.date, t: when(r.date), html: `<span class="badge s-Paid">In</span> ${esc(titleCase(r.from))}`, amt: `+${fmt(r.amount)}` })),
-    ...expenses.map(r => ({ d: r.date, t: when(r.date), html: `<span class="badge s-Pending">Out</span> ${esc(r.cat)}${r.desc ? `, ${esc(r.desc)}` : ""}`, amt: `−${fmt(r.amount)}` }))
-  ].sort((a, b) => b.t - a.t).slice(0, 8);
-  $("latestBody").innerHTML = latest.length
-    ? latest.map(x => `<tr><td>${esc(x.d)}</td><td class="wrap">${x.html}</td><td class="r num">${x.amt}</td></tr>`).join("")
-    : `<tr><td colspan="3" class="empty">Nothing recorded yet.</td></tr>`;
+    ...income.map(r => { const ty = String(r.type || "").trim() || "Other"; return { dir: "in", t: when(r.date), who: titleCase(r.from), tag: ty, c: inCol[ty], extra: r.method, amt: r.amount }; }),
+    ...expenses.map(r => ({ dir: "out", t: when(r.date), who: r.desc || r.cat, tag: r.cat, c: outCol[r.cat], extra: r.by ? "Paid by " + titleCase(r.by) : "", amt: r.amount }))
+  ].sort((a, b) => b.t - a.t).slice(0, 10);
+
+  // Money in and out over the last 7 days
+  const weekAgo = Date.now() - 7 * 864e5;
+  const wkIn = income.filter(r => when(r.date) >= weekAgo).reduce((a, r) => a + r.amount, 0);
+  const wkOut = expenses.filter(r => when(r.date) >= weekAgo).reduce((a, r) => a + r.amount, 0);
+  $("latestFlow").innerHTML = `<div class="in"><div class="k">In, last 7 days</div><div class="v num">${wkIn ? "+" : ""}${fmt(wkIn)}</div></div>
+    <div class="out"><div class="k">Out, last 7 days</div><div class="v num">${wkOut ? "−" : ""}${fmt(wkOut)}</div></div>`;
+
+  const dayName = t => {
+    if (!t) return "No date";
+    const d = new Date(t), today = new Date(); today.setHours(0, 0, 0, 0);
+    const diff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - today) / 864e5);
+    return diff === 0 ? "Today" : diff === -1 ? "Yesterday" : `${WEEK[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}`;
+  };
+  let lastDay = null;
+  $("latestBody").innerHTML = latest.length ? latest.map(x => {
+    const day = dayName(x.t), head = day !== lastDay ? `<div class="tl-day">${day}</div>` : "";
+    lastDay = day;
+    return head + `<div class="tl ${x.dir}">
+      <div class="ic" aria-hidden="true">${x.dir === "in" ? "↓" : "↑"}</div>
+      <div><div class="who">${esc(x.who)}</div>
+        <div class="sub"><span class="tagc" style="--c:${x.c || "#999"}"><i></i>${esc(x.tag)}</span>${x.extra ? `<span>${esc(x.extra)}</span>` : ""}</div></div>
+      <span class="pill ${x.dir} num">${x.dir === "in" ? "+" : "−"}${fmt(x.amt)}</span>
+    </div>`;
+  }).join("") : `<div class="empty" style="padding:0">Nothing recorded yet.</div>`;
 
   renderSponsors(sponsors);
   renderExpenses(expenses);
