@@ -751,9 +751,14 @@ function fillLists(rows) {
   $("tierSelect").innerHTML = opts(lists.tiers, keep("tierSelect") || "Other/Donor");
   // Entry fees have their own form, so they're left out of the general income types.
   $("typeSelect").innerHTML = opts(lists.types.filter(t => !/entry\s*fee|membership/i.test(t)), keep("typeSelect"));
-  $("methodSelect").innerHTML = opts(lists.methods, keep("methodSelect"));
-  $("entryMethodSelect").innerHTML = opts(lists.methods, keep("entryMethodSelect"));
-  $("memMethodSelect").innerHTML = opts(lists.methods, keep("memMethodSelect"));
+  // Payment method defaults to Cash: a new or cleared form starts on Cash, and a choice made
+  // while filling in a form is kept when the lists refresh.
+  ["methodSelect", "entryMethodSelect", "memMethodSelect"].forEach(id => {
+    const sel = $(id), was = sel.value;
+    const list = lists.methods.some(m => norm(m) === "cash") ? lists.methods : ["Cash", ...lists.methods];
+    sel.innerHTML = list.map(v => `<option value="${esc(v)}"${norm(v) === "cash" ? " selected" : ""}>${esc(v)}</option>`).join("");
+    if (was && list.includes(was)) sel.value = was;
+  });
 
   const kc = keep("catSelect");
   $("catSelect").innerHTML = opts(lists.categories, kc) + `<option value="__new"${kc === "__new" ? " selected" : ""}>Add new category…</option>`;
