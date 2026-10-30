@@ -361,7 +361,7 @@
       <div class="panel-head"><h2>Add match entry fee</h2></div>
       <form class="admin" id="entryForm">
         <label>Date<input type="date" name="date" required></label>
-        <label>Batch<input name="batch" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 2005" title="The batch year, for example 2005"></label>
+        <label>Batch<input name="batch" required maxlength="12" placeholder="e.g. 2005 or 2005 B" title="The batch year, with a letter if the batch has more than one team, for example 2005 B"></label>
         <label>Amount (LKR)<input type="number" name="amount" min="1" step="any" inputmode="decimal" required></label>
         <label>Payment method<select name="method" id="entryMethodSelect"></select></label>
         <label>Notes<input name="notes"></label>
@@ -373,7 +373,7 @@
       <div class="panel-head"><h2>Add membership fee</h2></div>
       <form class="admin" id="memForm">
         <label>Date<input type="date" name="date" required></label>
-        <label>Batch<input name="batch" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 2005" title="The batch year, for example 2005"></label>
+        <label>Batch<input name="batch" required maxlength="12" placeholder="e.g. 2005 or 2005 B" title="The batch year, with a letter if the batch has more than one team, for example 2005 B"></label>
         <label>Amount (LKR)<input type="number" name="amount" min="1" step="any" inputmode="decimal" required></label>
         <label>Payment method<select name="method" id="memMethodSelect"></select></label>
         <label>Notes<input name="notes"></label>
